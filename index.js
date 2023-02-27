@@ -65,11 +65,39 @@ async function run() {
       return
     }
 
-    if (!draft) {
+    core.info('Listing releases...')
+    const releases = await octokit.paginate(octokit.rest.repos.listReleases, github.context.repo)
+    let release = releases.find(release => release.tag_name === tag)
+
+    let shouldCreateExtraTags = !draft
+    if (release != null) {
+      if (release.draft === true && draft === false) {
+        core.info('Publishing release...')
+        await octokit.rest.repos.updateRelease({
+          ...github.context.repo,
+          release_id: release.id,
+          draft
+        })
+      } else {
+        shouldCreateExtraTags = false
+      }
+    } else {
+      core.info('Creating release...')
+      release = (await octokit.rest.repos.createRelease({
+        ...github.context.repo,
+        tag_name: tag,
+        name: tag,
+        body,
+        draft,
+        prerelease: version[4] != null
+      })).data
+    }
+    core.info(`Release: ${release.html_url}`)
+
+    if (shouldCreateExtraTags) {
       core.info('Creating tags...')
       const suffix = `${version[4] != null ? '-' + version[4] : ''}${version[5] != null ? '+' + version[5] : ''}`
       const tags = [
-        `v${version[1]}.${version[2]}.${version[3]}${suffix}`,
         `v${version[1]}.${version[2]}${suffix}`,
         `v${version[1]}${suffix}`
       ]
@@ -92,31 +120,6 @@ async function run() {
       }
     }
 
-    core.info('Listing releases...')
-    const releases = await octokit.paginate(octokit.rest.repos.listReleases, github.context.repo)
-    let release = releases.find(release => release.tag_name === tag)
-
-    if (release != null) {
-      if (release.draft !== draft) {
-        core.info('Updating release...')
-        await octokit.rest.repos.updateRelease({
-          ...github.context.repo,
-          release_id: release.id,
-          draft
-        })
-      }
-    } else {
-      core.info('Creating release...')
-      release = (await octokit.rest.repos.createRelease({
-        ...github.context.repo,
-        tag_name: tag,
-        name: tag,
-        body,
-        draft,
-        prerelease: version[4] != null
-      })).data
-    }
-    core.info(`Release: ${release.html_url}`)
     core.setOutput("url", release.html_url)
     core.setOutput("tag", tag)
     core.setOutput("body", body)
