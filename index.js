@@ -19,7 +19,8 @@ try {
     [owner, repo] = github.context.payload.pull_request.head.repo.full_name.split('/')
     sha = github.context.payload.pull_request.head.sha
   } else {
-    ({owner, repo}) = github.context.repo
+    owner = github.context.repo.owner
+    repo = github.context.repo.repo
     sha = github.context.sha
   }
   const content = await github.repos.getContent({
