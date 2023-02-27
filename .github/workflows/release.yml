@@ -1,7 +1,7 @@
 name: Release
 on:
   workflow_dispatch:
-    input:
+    inputs:
       draft:
         description: 'Whether the release should be a draft or not'
         required: true
