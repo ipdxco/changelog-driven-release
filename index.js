@@ -106,17 +106,17 @@ async function run() {
       }
     } else {
       core.info('Creating release...')
-      release = await octokit.rest.repos.createRelease({
+      release = (await octokit.rest.repos.createRelease({
         ...github.context.repo,
         tag_name: tag,
         name: tag,
         body,
         draft,
         prerelease: version[4] != null
-      })
+      })).data
     }
-    core.info(`Release: ${release.data.html_url}`)
-    core.setOutput("url", release.data.html_url)
+    core.info(`Release: ${release.html_url}`)
+    core.setOutput("url", release.html_url)
     core.setOutput("tag", tag)
     core.setOutput("body", body)
   } catch (error) {
