@@ -19,19 +19,23 @@ async function run() {
     const octokit = new github.getOctokit(token)
 
     core.info('Getting changelog...')
-    let owner, repo, sha
+    let owner, repo, ref
     if (github.context.eventName == 'pull_request') {
       [owner, repo] = github.context.payload.pull_request.head.repo.full_name.split('/')
-      sha = github.context.payload.pull_request.head.sha
+      ref = github.context.payload.pull_request.head.sha
     } else {
       owner = github.context.repo.owner
       repo = github.context.repo.repo
-      sha = github.context.sha
+      ref = github.context.sha
     }
+    core.info(`Owner: ${owner}`)
+    core.info(`Repo: ${repo}`)
+    core.info(`Ref: ${ref}`)
     const content = await octokit.rest.repos.getContent({
       owner,
       repo,
-      path
+      path,
+      ref
     })
     const changelog = Buffer.from(content.data.content, 'base64').toString()
     core.debug(`Changelog: ${changelog}`)
@@ -81,7 +85,7 @@ async function run() {
           await octokit.rest.git.createRef({
             ...github.context.repo,
             ref: `refs/tags/${tag}`,
-            sha
+            sha: github.context.sha
           })
         }
       }
