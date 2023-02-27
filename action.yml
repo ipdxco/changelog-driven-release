@@ -1,0 +1,21 @@
+name: 'Changelog Driven Release'
+description: 'Release a new version of your project when you update the changelog'
+inputs:
+  path:
+    description: 'Path to the changelog file'
+    required: true
+    default: 'CHANGELOG.md'
+  draft:
+    description: 'Whether the release should be a draft or not'
+    required: true
+    default: 'true'
+outputs:
+  url:
+    description: 'The URL of the release'
+  tag:
+    description: 'The tag of the release'
+  body:
+    description: 'The body of the release'
+runs:
+  using: 'node16'
+  main: 'index.js'

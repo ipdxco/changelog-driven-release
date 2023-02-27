@@ -1,0 +1,35 @@
+name: Release
+on:
+  workflow_dispatch:
+    input:
+      draft:
+        description: 'Whether the release should be a draft or not'
+        required: true
+        default: 'true'
+  push:
+    paths: [CHANGELOG.md]
+    branches: [main]
+  pull_request:
+    paths: [CHANGELOG.md]
+    branches: [main]
+jobs:
+  Publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - id: release
+        if: hashFiles('CHANGELOG.md') != ''
+        uses: ./
+        with:
+          path: CHANGELOG.md
+          draft: ${{ github.event_name == 'pull_request' || github.event.inputs.draft == 'true' }}
+      - if: hashFiles('CHANGELOG.md') != '' && github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@3d60a5b2dae89d44e0c6ddc69dd7536aec2071cd # v2.5.0
+        with:
+          header: release
+          recreate: true
+          message: |
+            ## [${{ steps.release.outputs.tag }}](steps.release.outputs.url)
+
+            ${{ steps.release.outputs.body }}
