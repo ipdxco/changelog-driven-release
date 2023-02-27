@@ -80,7 +80,8 @@ async function run() {
           ...github.context.repo,
           ref: `tags/${tag}`
         })
-        if (refs.data.length == 0) {
+        const ref = refs.data.find(ref => ref.ref === `refs/tags/${tag}`)
+        if (ref == null) {
           core.info('Creating ref...')
           await octokit.rest.git.createRef({
             ...github.context.repo,
