@@ -93,7 +93,7 @@ async function run() {
 
     core.info('Listing releases...')
     const releases = await octokit.paginate(octokit.rest.repos.listReleases, github.context.repo)
-    const release = releases.find(release => release.tag_name === tag)
+    let release = releases.find(release => release.tag_name === tag)
 
     if (release != null) {
       if (release.draft !== draft) {
