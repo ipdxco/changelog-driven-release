@@ -30,6 +30,6 @@ jobs:
           header: release
           recreate: true
           message: |
-            ## [${{ steps.release.outputs.tag }}](steps.release.outputs.url)
+            ## [${{ steps.release.outputs.tag }}](${{ steps.release.outputs.url }})
 
             ${{ steps.release.outputs.body }}
