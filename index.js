@@ -76,7 +76,7 @@ async function run() {
       for (const tag of tags) {
         core.info(`Tag: ${tag}`)
         core.info('Listing refs...')
-        const refs = octokit.rest.git.listRefs({
+        const refs = octokit.rest.git.listMatchingRefs({
           ...github.context.repo,
           ref: `tags/${tag}`
         })
