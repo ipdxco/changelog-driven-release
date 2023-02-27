@@ -11,8 +11,12 @@ async function run() {
 
     const path = core.getInput('path')
     const draft = core.getInput('draft') === 'true'
+    const token = core.getInput('token')
     core.info(`Path: ${path}`)
     core.info(`Draft: ${draft}`)
+    core.info(`Token: ${token != null ? '***' : null}`)
+
+    const octokit = new github.getOctokit(token)
 
     core.info('Getting changelog...')
     let owner, repo, sha
@@ -24,7 +28,7 @@ async function run() {
       repo = github.context.repo.repo
       sha = github.context.sha
     }
-    const content = await github.repos.getContent({
+    const content = await octokit.rest.repos.getContent({
       owner,
       repo,
       path
@@ -68,13 +72,13 @@ async function run() {
       for (const tag of tags) {
         core.info(`Tag: ${tag}`)
         core.info('Listing refs...')
-        const refs = octokit.git.listRefs({
+        const refs = octokit.rest.git.listRefs({
           ...github.context.repo,
           ref: `tags/${tag}`
         })
         if (refs.data.length == 0) {
           core.info('Creating ref...')
-          await github.git.createRef({
+          await octokit.rest.git.createRef({
             ...github.context.repo,
             ref: `refs/tags/${tag}`,
             sha
@@ -84,13 +88,13 @@ async function run() {
     }
 
     core.info('Listing releases...')
-    const releases = await github.paginate(octokit.rest.repos.listReleases, github.context.repo)
+    const releases = await octokit.paginate(octokit.rest.repos.listReleases, github.context.repo)
     const release = releases.find(release => release.tag_name === tag)
 
     if (release != null) {
       if (release.draft !== draft) {
         core.info('Updating release...')
-        await github.repos.updateRelease({
+        await octokit.rest.repos.updateRelease({
           ...github.context.repo,
           release_id: release.id,
           draft
@@ -98,7 +102,7 @@ async function run() {
       }
     } else {
       core.info('Creating release...')
-      release = await github.repos.createRelease({
+      release = await octokit.rest.repos.createRelease({
         ...github.context.repo,
         tag_name: tag,
         name: tag,

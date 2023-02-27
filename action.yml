@@ -9,6 +9,10 @@ inputs:
     description: 'Whether the release should be a draft or not'
     required: true
     default: 'true'
+  token:
+    description: 'The GitHub token'
+    required: true
+    default: '${{ github.token }}'
 outputs:
   url:
     description: 'The URL of the release'
