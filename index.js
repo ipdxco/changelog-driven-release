@@ -65,11 +65,29 @@ async function run() {
       return
     }
 
+    if (!draft) {
+      core.info('Creating fixed tag...')
+      core.info('Listing refs...')
+      const refs = await octokit.rest.git.listMatchingRefs({
+        ...github.context.repo,
+        ref: `tags/${tag}`
+      })
+      const ref = refs.data.find(ref => ref.ref === `refs/tags/${tag}`)
+      if (ref == null) {
+        core.info('Creating ref...')
+        await octokit.rest.git.createRef({
+          ...github.context.repo,
+          ref: `refs/tags/${tag}`,
+          sha: github.context.sha
+        })
+      }
+    }
+
     core.info('Listing releases...')
     const releases = await octokit.paginate(octokit.rest.repos.listReleases, github.context.repo)
     let release = releases.find(release => release.tag_name === tag)
 
-    let shouldCreateExtraTags = !draft
+    let shouldUpdateMutableTags = !draft
     if (release != null) {
       if (release.draft === true && draft === false) {
         core.info('Publishing release...')
@@ -79,7 +97,7 @@ async function run() {
           draft
         })
       } else {
-        shouldCreateExtraTags = false
+        shouldUpdateMutableTags = false
       }
     } else {
       core.info('Creating release...')
@@ -94,8 +112,8 @@ async function run() {
     }
     core.info(`Release: ${release.html_url}`)
 
-    if (shouldCreateExtraTags) {
-      core.info('Creating tags...')
+    if (shouldUpdateMutableTags) {
+      core.info('Updating mutable tags...')
       const suffix = `${version[4] != null ? '-' + version[4] : ''}${version[5] != null ? '+' + version[5] : ''}`
       const tags = [
         `v${version[1]}.${version[2]}${suffix}`,
@@ -115,6 +133,14 @@ async function run() {
             ...github.context.repo,
             ref: `refs/tags/${tag}`,
             sha: github.context.sha
+          })
+        } else {
+          core.info('Updating ref...')
+          await octokit.rest.git.updateRef({
+            ...github.context.repo,
+            ref: `tags/${tag}`,
+            sha: github.context.sha,
+            force: true
           })
         }
       }
