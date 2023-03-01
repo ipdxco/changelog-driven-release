@@ -70,7 +70,7 @@ async function run() {
     const releases = await octokit.paginate(octokit.rest.repos.listReleases, github.context.repo)
     let release = releases.find(release => release.tag_name === tag)
 
-    if (release != null || release.published_at != null) {
+    if (release != null && release.published_at != null) {
       core.info('Release is already published')
       return
     }
