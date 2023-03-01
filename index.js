@@ -62,57 +62,47 @@ async function run() {
     core.info(`Tag: ${tag}`)
 
     if (version == null) {
+      core.info('No release found')
       return
-    }
-
-    if (!draft) {
-      core.info('Creating fixed tag...')
-      core.info('Listing refs...')
-      const refs = await octokit.rest.git.listMatchingRefs({
-        ...github.context.repo,
-        ref: `tags/${tag}`
-      })
-      const ref = refs.data.find(ref => ref.ref === `refs/tags/${tag}`)
-      if (ref == null) {
-        core.info('Creating ref...')
-        await octokit.rest.git.createRef({
-          ...github.context.repo,
-          ref: `refs/tags/${tag}`,
-          sha: github.context.sha
-        })
-      }
     }
 
     core.info('Listing releases...')
     const releases = await octokit.paginate(octokit.rest.repos.listReleases, github.context.repo)
     let release = releases.find(release => release.tag_name === tag)
 
-    let shouldUpdateMutableTags = !draft
-    if (release != null) {
-      if (release.draft === true && draft === false) {
-        core.info('Publishing release...')
-        await octokit.rest.repos.updateRelease({
-          ...github.context.repo,
-          release_id: release.id,
-          draft
-        })
-      } else {
-        shouldUpdateMutableTags = false
-      }
+    if (release != null || release.published_at != null) {
+      core.info('Release is already published')
+      return
+    }
+
+    let target
+    if (github.context.eventName == 'pull_request') {
+      target = github.context.payload.pull_request.head.ref
     } else {
+      target = github.context.sha
+    }
+
+    if (release == null) {
       core.info('Creating release...')
       release = (await octokit.rest.repos.createRelease({
         ...github.context.repo,
         tag_name: tag,
-        name: tag,
+        target_commitish: target,
         body,
         draft,
         prerelease: version[4] != null
       })).data
+    } else {
+      core.info('Updating release...')
+      release = await octokit.rest.repos.updateRelease({
+        ...github.context.repo,
+        release_id: release.id,
+        draft
+      })
     }
     core.info(`Release: ${release.html_url}`)
 
-    if (shouldUpdateMutableTags) {
+    if (release.published_at != null) {
       core.info('Updating mutable tags...')
       const suffix = `${version[4] != null ? '-' + version[4] : ''}${version[5] != null ? '+' + version[5] : ''}`
       const tags = [
