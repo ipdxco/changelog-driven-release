@@ -1,5 +1,8 @@
 name: 'Changelog Driven Release'
 description: 'Release a new version of your project when you update the changelog'
+branding:
+  icon: 'award'
+  color: 'green'
 inputs:
   path:
     description: 'Path to the changelog file'
