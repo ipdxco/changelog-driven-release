@@ -21,6 +21,8 @@ outputs:
     description: 'The URL of the release'
   tag:
     description: 'The tag of the release'
+  tags:
+    description: 'The tags of the release'
   body:
     description: 'The body of the release'
 runs:

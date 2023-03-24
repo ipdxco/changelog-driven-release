@@ -102,13 +102,12 @@ async function run() {
     }
     core.info(`Release: ${release.html_url}`)
 
+    const tags = []
     if (release.published_at != null) {
       core.info('Updating mutable tags...')
       const suffix = `${version[4] != null ? '-' + version[4] : ''}${version[5] != null ? '+' + version[5] : ''}`
-      const tags = [
-        `v${version[1]}.${version[2]}${suffix}`,
-        `v${version[1]}${suffix}`
-      ]
+      tags.push(`v${version[1]}.${version[2]}${suffix}`)
+      tags.push(`v${version[1]}${suffix}`)
       for (const tag of tags) {
         core.info(`Tag: ${tag}`)
         core.info('Listing refs...')
@@ -135,9 +134,11 @@ async function run() {
         }
       }
     }
+    tags.push(tag)
 
     core.setOutput("url", release.html_url)
     core.setOutput("tag", tag)
+    core.setOutput("tags", tags.join(','))
     core.setOutput("body", body)
   } catch (error) {
     core.setFailed(error.message)
