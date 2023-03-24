@@ -56,15 +56,15 @@ async function run() {
         }
       }
     }
-    const tag = `v${version[0]}`
-    core.info(`Version: ${version[0]}`)
-    core.info(`Body: ${body}`)
-    core.info(`Tag: ${tag}`)
-
     if (version == null) {
       core.info('No release found')
       return
     }
+
+    const tag = `v${version[0]}`
+    core.info(`Version: ${version[0]}`)
+    core.info(`Body: ${body}`)
+    core.info(`Tag: ${tag}`)
 
     core.info('Listing releases...')
     const releases = await octokit.paginate(octokit.rest.repos.listReleases, github.context.repo)
