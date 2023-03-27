@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.0.6] - 2023-03-24
+### Fixed
+- fixed release retrieval after creation/update
+
 ## [1.0.5] - 2023-03-24
 ### Fixed
 - changelog parsing when there is no released version in the CHANGELOG.md

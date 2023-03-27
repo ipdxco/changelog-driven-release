@@ -67,7 +67,7 @@ async function run() {
     core.info(`Tag: ${tag}`)
 
     core.info('Listing releases...')
-    const releases = await octokit.paginate(octokit.rest.repos.listReleases, github.context.repo)
+    let releases = await octokit.paginate(octokit.rest.repos.listReleases, github.context.repo)
     let release = releases.find(release => release.tag_name === tag)
 
     if (release != null && release.published_at != null) {
@@ -84,7 +84,7 @@ async function run() {
 
     if (release == null) {
       core.info('Creating release...')
-      release = (await octokit.rest.repos.createRelease({
+      const response = (await octokit.rest.repos.createRelease({
         ...github.context.repo,
         tag_name: tag,
         target_commitish: target,
@@ -92,14 +92,24 @@ async function run() {
         draft,
         prerelease: version[4] != null
       })).data
+      core.info(JSON.stringify(response, null, 2))
     } else {
       core.info('Updating release...')
-      release = await octokit.rest.repos.updateRelease({
+      const response = await octokit.rest.repos.updateRelease({
         ...github.context.repo,
         release_id: release.id,
         draft
       })
+      core.info(JSON.stringify(response, null, 2))
     }
+    core.info('Listing releases...')
+    releases = await octokit.paginate(octokit.rest.repos.listReleases, github.context.repo)
+    release = releases.find(release => release.tag_name === tag)
+
+    if (release == null) {
+      throw new Error('Release not found')
+    }
+
     core.info(`Release: ${release.html_url}`)
 
     const tags = []
