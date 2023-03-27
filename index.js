@@ -102,6 +102,10 @@ async function run() {
       })
       core.info(JSON.stringify(response, null, 2))
     }
+
+    core.info('Waiting for 10 seconds...')
+    await new Promise(resolve => setTimeout(resolve, 10000))
+
     core.info('Listing releases...')
     releases = await octokit.paginate(octokit.rest.repos.listReleases, github.context.repo)
     release = releases.find(release => release.tag_name === tag)
