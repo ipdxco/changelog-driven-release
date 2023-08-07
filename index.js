@@ -77,7 +77,7 @@ async function run() {
 
     let target
     if (github.context.eventName == 'pull_request') {
-      target = github.context.payload.pull_request.head.ref
+      target = github.context.payload.pull_request.base.ref
     } else {
       target = github.context.sha
     }
