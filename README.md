@@ -8,7 +8,7 @@ To use the action, add the following step to your GitHub Actions workflow:
 
 ```yml
 - name: Create GitHub release
-  uses: pl-strflt/changelog-driven-release@v1
+  uses: ipdxco/changelog-driven-release@v1
   with:
     path: 'CHANGELOG.md'
     draft: true
@@ -38,6 +38,6 @@ When run, the action looks for the top-most release section in the changelog fil
 The action supports both prerelease and build version suffixes. If the action is run in draft mode, the release will be a draft release. Otherwise, it will be a published release, with the tag automatically created.
 ## Example
 
-This action is used to release itself. Here's an example release PR: https://github.com/pl-strflt/changelog-driven-release/pull/4. You can see the release workflow [here](https://github.com/pl-strflt/changelog-driven-release/blob/main/.github/workflows/release.yml) and the changelog that it uses [here](https://github.com/pl-strflt/changelog-driven-release/blob/main/CHANGELOG.md).
+This action is used to release itself. Here's an example release PR: https://github.com/ipdxco/changelog-driven-release/pull/4. You can see the release workflow [here](https://github.com/ipdxco/changelog-driven-release/blob/main/.github/workflows/release.yml) and the changelog that it uses [here](https://github.com/ipdxco/changelog-driven-release/blob/main/CHANGELOG.md).
 
 ---
