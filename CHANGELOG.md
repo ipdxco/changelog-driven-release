@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.0.9] - 2023-11-15
+### Changed
+- moved to the IPDX namespace
+
 ## [1.0.8] - 2023-08-07
 ### Fixed
 - target in draft releases
