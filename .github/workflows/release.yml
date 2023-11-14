@@ -1,4 +1,5 @@
 name: Release
+
 on:
   workflow_dispatch:
     inputs:
@@ -12,6 +13,10 @@ on:
   pull_request:
     paths: [CHANGELOG.md]
     branches: [main]
+
+permissions:
+  contents: write
+
 jobs:
   Publish:
     name: Publish

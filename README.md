@@ -7,14 +7,21 @@ Changelog Driven Release is a GitHub Action that automates the release process f
 To use the action, add the following step to your GitHub Actions workflow:
 
 ```yml
-- name: Create GitHub release
-  uses: ipdxco/changelog-driven-release@v1
-  with:
-    path: 'CHANGELOG.md'
-    draft: true
-    token: ${{ secrets.GITHUB_TOKEN }}
+permissions:
+  contents: write
+
+jobs:
+  example:
+    steps:
+      - name: Create GitHub release
+        uses: ipdxco/changelog-driven-release@v1
+        with:
+          path: 'CHANGELOG.md'
+          draft: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+See [the full example](./.github/workflows/release.yml) of how we use Changelog Driven Release to release Changelog Driven Release 🔁
 
 ### Inputs
 
