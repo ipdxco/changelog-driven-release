@@ -27,8 +27,10 @@ on:
       created_comment_id:
         description: 'The ID of the created comment'
         value: ${{ jobs.publish.outputs.created_comment_id }}
+
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   publish:
