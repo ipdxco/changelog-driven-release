@@ -50,14 +50,10 @@ jobs:
         with:
           path: changelog-driven-release
           ref: ${{ steps.reusable-workflow.outputs.sha }}
-      - uses: actions/checkout@v3
-        with:
-          path: repository
       - id: release
-        if: hashFiles('repository/${{ inputs.path }}') != ''
         uses: ./changelog-driven-release
         with:
-          path: repository/${{ inputs.path }}
+          path: ${{ inputs.path }}
           draft: ${{ github.event_name == 'pull_request' || github.event.inputs.draft == 'true' }}
       - id: comment
         if: github.event_name == 'pull_request' && steps.release.outputs.tag != ''
