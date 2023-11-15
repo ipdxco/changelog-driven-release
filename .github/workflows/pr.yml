@@ -5,7 +5,7 @@ on:
     inputs:
       path:
         description: 'Path to the changelog file'
-        required: true
+        required: false
         default: 'CHANGELOG.md'
         type: string
     outputs:
