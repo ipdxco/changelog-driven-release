@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.0.12] - 2023-11-15
+### Fixed
+- the reusable workflow context repository
+
 ## [1.0.11] - 2023-11-15
 ### Fixed
 - set the name of the release to the tag name

@@ -47,7 +47,7 @@ jobs:
       - id: reusable-workflow
         uses: ipdxco/reusable-workflow-context@bd065a1588139ea822a06c07cb6209782d74efb0
         with:
-          path: ipdxco/reusable-workflow-context/pr.yml
+          path: ipdxco/changelog-driven-release/.github/workflows/pr.yml
       - uses: actions/checkout@v3
         with:
           path: changelog-driven-release
