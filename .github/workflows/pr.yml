@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  workflow_call:
+    inputs:
+      path:
+        description: 'Path to the changelog file'
+        required: true
+        default: 'CHANGELOG.md'
+        type: string
+    outputs:
+      url:
+        description: 'The URL of the release'
+        value: ${{ jobs.publish.outputs.url }}
+      tag:
+        description: 'The tag of the release'
+        value: ${{ jobs.publish.outputs.tag }}
+      tags:
+        description: 'The tags of the release'
+        value: ${{ jobs.publish.outputs.tags }}
+      body:
+        description: 'The body of the release'
+        value: ${{ jobs.publish.outputs.body }}
+      previous_comment_id:
+        description: 'The ID of the previous comment'
+        value: ${{ jobs.publish.outputs.previous_comment_id }}
+      created_comment_id:
+        description: 'The ID of the created comment'
+        value: ${{ jobs.publish.outputs.created_comment_id }}
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.release.outputs.url }}
+      tag: ${{ steps.release.outputs.tag }}
+      tags: ${{ steps.release.outputs.tags }}
+      body: ${{ steps.release.outputs.body }}
+      previous_comment_id: ${{ steps.comment.outputs.previous_comment_id }}
+      created_comment_id: ${{ steps.comment.outputs.created_comment_id }}
+    steps:
+      - id: reusable-workflow
+        uses: ipdxco/reusable-workflow-context@bd065a1588139ea822a06c07cb6209782d74efb0
+        with:
+          path: ipdxco/reusable-workflow-context/pr.yml
+      - uses: actions/checkout@v3
+        with:
+          path: changelog-driven-release
+          ref: ${{ steps.reusable-workflow.outputs.sha }}
+      - uses: actions/checkout@v3
+        with:
+          path: repository
+      - id: release
+        if: hashFiles('repository/${{ inputs.path }}') != ''
+        uses: ./changelog-driven-release
+        with:
+          path: repository/${{ inputs.path }}
+          draft: ${{ github.event_name == 'pull_request' || github.event.inputs.draft == 'true' }}
+      - id: comment
+        if: github.event_name == 'pull_request' && steps.release.outputs.tag != ''
+        uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 # v2.6.2
+        with:
+          header: release
+          recreate: true
+          message: |
+            ## [${{ steps.release.outputs.tag }}](${{ steps.release.outputs.url }})
+
+            ${{ steps.release.outputs.body }}
