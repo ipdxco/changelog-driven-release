@@ -50,6 +50,7 @@ jobs:
           path: ipdxco/changelog-driven-release/.github/workflows/pr.yml
       - uses: actions/checkout@v3
         with:
+          repository: ipdxco/changelog-driven-release
           path: changelog-driven-release
           ref: ${{ steps.reusable-workflow.outputs.sha }}
       - id: release
