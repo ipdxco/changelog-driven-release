@@ -88,6 +88,7 @@ async function run() {
         ...github.context.repo,
         tag_name: tag,
         target_commitish: target,
+        name: tag,
         body,
         draft,
         prerelease: version[4] != null
@@ -98,6 +99,7 @@ async function run() {
       const response = await octokit.rest.repos.updateRelease({
         ...github.context.repo,
         release_id: release.id,
+        target_commitish: target,
         draft
       })
       core.info(JSON.stringify(response, null, 2))
