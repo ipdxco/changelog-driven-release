@@ -45,7 +45,7 @@ jobs:
       created_comment_id: ${{ steps.comment.outputs.created_comment_id }}
     steps:
       - id: reusable-workflow
-        uses: ipdxco/reusable-workflow-context@bd065a1588139ea822a06c07cb6209782d74efb0
+        uses: ipdxco/reusable-workflow-context@e0cb8a05f123873388b5079c96acfe236f59a870
         with:
           path: ipdxco/changelog-driven-release/.github/workflows/pr.yml
       - uses: actions/checkout@v3
