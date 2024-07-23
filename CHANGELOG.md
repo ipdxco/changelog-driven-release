@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- automatically generate release notes on empty body
 - an input to control whether mutable tags should be created/updated
 
 ## [1.0.13] - 2023-11-15

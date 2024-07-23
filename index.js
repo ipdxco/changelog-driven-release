@@ -86,7 +86,7 @@ async function run() {
 
     if (release == null) {
       core.info('Creating release...')
-      const response = (await octokit.rest.repos.createRelease({
+      const options = {
         ...github.context.repo,
         tag_name: tag,
         target_commitish: target,
@@ -94,7 +94,13 @@ async function run() {
         body,
         draft,
         prerelease: version[4] != null
-      })).data
+      }
+      if (body.trim() !== '') {
+        options.body = body
+      } else {
+        options.generate_release_notes = true
+      }
+      const response = (await octokit.rest.repos.createRelease(options)).data
       core.info(JSON.stringify(response, null, 2))
     } else {
       core.info('Updating release...')
