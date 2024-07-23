@@ -11,9 +11,11 @@ async function run() {
 
     const path = core.getInput('path')
     const draft = core.getInput('draft') === 'true'
+    const mutable = core.getInput('mutable') === 'true'
     const token = core.getInput('token')
     core.info(`Path: ${path}`)
     core.info(`Draft: ${draft}`)
+    core.info(`Mutable: ${mutable}`)
     core.info(`Token: ${token != null ? '***' : null}`)
 
     const octokit = new github.getOctokit(token)
@@ -125,7 +127,7 @@ async function run() {
     core.info(`Release: ${release.html_url}`)
 
     const tags = []
-    if (release.published_at != null) {
+    if (mutable && release.published_at != null) {
       core.info('Updating mutable tags...')
       const suffix = `${version[4] != null ? '-' + version[4] : ''}${version[5] != null ? '+' + version[5] : ''}`
       tags.push(`v${version[1]}.${version[2]}${suffix}`)
