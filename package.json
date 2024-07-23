@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pl-strflt/changelog-driven-release.git"
+    "url": "git+https://github.com/ipdxco/changelog-driven-release.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/pl-strflt/changelog-driven-release/issues"
+    "url": "https://github.com/ipdxco/changelog-driven-release/issues"
   },
-  "homepage": "https://github.com/pl-strflt/changelog-driven-release#readme",
+  "homepage": "https://github.com/ipdxco/changelog-driven-release#readme",
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1"

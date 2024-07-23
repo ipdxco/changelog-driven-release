@@ -1,4 +1,5 @@
 name: Release
+
 on:
   workflow_dispatch:
     inputs:
@@ -12,24 +13,11 @@ on:
   pull_request:
     paths: [CHANGELOG.md]
     branches: [main]
-jobs:
-  Publish:
-    name: Publish
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - id: release
-        if: hashFiles('CHANGELOG.md') != ''
-        uses: ./
-        with:
-          path: CHANGELOG.md
-          draft: ${{ github.event_name == 'pull_request' || github.event.inputs.draft == 'true' }}
-      - if: hashFiles('CHANGELOG.md') != '' && github.event_name == 'pull_request'  && steps.release.outputs.tag != ''
-        uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 # v2.6.2
-        with:
-          header: release
-          recreate: true
-          message: |
-            ## [${{ steps.release.outputs.tag }}](${{ steps.release.outputs.url }})
 
-            ${{ steps.release.outputs.body }}
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  publish:
+    uses: ./.github/workflows/pr.yml

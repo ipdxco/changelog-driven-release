@@ -11,9 +11,11 @@ async function run() {
 
     const path = core.getInput('path')
     const draft = core.getInput('draft') === 'true'
+    const mutable = core.getInput('mutable') === 'true'
     const token = core.getInput('token')
     core.info(`Path: ${path}`)
     core.info(`Draft: ${draft}`)
+    core.info(`Mutable: ${mutable}`)
     core.info(`Token: ${token != null ? '***' : null}`)
 
     const octokit = new github.getOctokit(token)
@@ -77,21 +79,28 @@ async function run() {
 
     let target
     if (github.context.eventName == 'pull_request') {
-      target = github.context.payload.pull_request.head.ref
+      target = github.context.payload.pull_request.base.ref
     } else {
       target = github.context.sha
     }
 
     if (release == null) {
       core.info('Creating release...')
-      const response = (await octokit.rest.repos.createRelease({
+      const options = {
         ...github.context.repo,
         tag_name: tag,
         target_commitish: target,
+        name: tag,
         body,
         draft,
         prerelease: version[4] != null
-      })).data
+      }
+      if (body.trim() !== '') {
+        options.body = body
+      } else {
+        options.generate_release_notes = true
+      }
+      const response = (await octokit.rest.repos.createRelease(options)).data
       core.info(JSON.stringify(response, null, 2))
     } else {
       core.info('Updating release...')
@@ -118,7 +127,7 @@ async function run() {
     core.info(`Release: ${release.html_url}`)
 
     const tags = []
-    if (release.published_at != null) {
+    if (mutable && release.published_at != null) {
       core.info('Updating mutable tags...')
       const suffix = `${version[4] != null ? '-' + version[4] : ''}${version[5] != null ? '+' + version[5] : ''}`
       tags.push(`v${version[1]}.${version[2]}${suffix}`)
