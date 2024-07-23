@@ -12,6 +12,10 @@ inputs:
     description: 'Whether the release should be a draft or not'
     required: true
     default: 'true'
+  mutable:
+    description: 'Whether mutable tags should be updated or not'
+    required: true
+    default: 'true'
   token:
     description: 'The GitHub token'
     required: true
