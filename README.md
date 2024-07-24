@@ -30,6 +30,9 @@ See [the full example](./.github/workflows/release.yml) of how we use Changelog 
 ### Inputs
 
 * `path`: The path to the changelog file. Default: `CHANGELOG.md`.
+* `draft`: Whether the release should be a draft or not. Default: `true`
+* `mutable`: Whether mutable tags should be updated or not (i.e. if in addition to vX.Y.Z, vX.Y and vX should be created). Default: `true`
+* `token`: The GitHub token. Default: `${{ github.token }}`
 
 ### Outputs
 
