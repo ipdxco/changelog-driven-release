@@ -8,6 +8,11 @@ on:
         required: false
         default: 'CHANGELOG.md'
         type: string
+      draft:
+        description: 'Whether the release should be a draft or not'
+        required: false
+        default: 'false'
+        type: string
       mutable:
         description: 'Whether mutable tags should be updated or not'
         required: false
@@ -62,8 +67,8 @@ jobs:
         uses: ./changelog-driven-release
         with:
           path: ${{ inputs.path }}
-          draft: ${{ github.event_name == 'pull_request' || github.event.inputs.draft == 'true' }}
-          mutable: ${{ github.event.inputs.mutable == 'true' }}
+          draft: ${{ github.event_name == 'pull_request' || inputs.draft == 'true' }}
+          mutable: ${{ inputs.mutable == 'true' }}
       - id: comment
         if: github.event_name == 'pull_request' && steps.release.outputs.tag != ''
         uses: marocchino/sticky-pull-request-comment@67d0dec7b07ed060a405f9b2a64b8ab319fdd7db # v2.9.2
