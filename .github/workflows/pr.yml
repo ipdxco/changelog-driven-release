@@ -53,7 +53,7 @@ jobs:
         uses: ipdxco/reusable-workflow-context@e0cb8a05f123873388b5079c96acfe236f59a870
         with:
           path: ipdxco/changelog-driven-release/.github/workflows/pr.yml
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           repository: ipdxco/changelog-driven-release
           path: changelog-driven-release
